@@ -142,7 +142,8 @@ const AudioRecorder = () => {
       formData.append('audio', audioBlob, 'recording.wav');
       formData.append('languageCode', selectedLanguage);
 
-      const response = await fetch('http://localhost:4500/process-audio', {
+      
+      const response = await fetch('https://saravam.onrender.com/process-audio', {
         method: 'POST',
         body: formData,
       });
