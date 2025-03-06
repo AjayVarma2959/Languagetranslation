@@ -225,7 +225,7 @@ const AudioRecorder = () => {
                 variant="subtitle1"
                 color="text.secondary"
               >
-                Record and translate your audio in multiple languages
+                Record your audio in multiple languages and translate 
               </Typography>
             </Box>
 
