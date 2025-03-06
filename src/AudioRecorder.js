@@ -242,6 +242,19 @@ const AudioRecorder = () => {
   };
 
   const startRecording = async () => {
+    // Reset previous results
+    setSubmissionResult(null);
+    setTranslation('');
+    setOutputAudioURL('');
+    setAudioURL('');
+    setAudioBlob(null);
+
+    if (!selectedLanguage) {
+      setError('Please select a language before recording.');
+      setShowError(true);
+      return; // Don't start recording if no language is selected
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
