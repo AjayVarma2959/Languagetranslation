@@ -16,28 +16,175 @@ import {
   Button,
   Alert,
   Snackbar,
+  Modal,
 } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
-import TranslateIcon from '@mui/icons-material/Translate';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import LanguageIcon from '@mui/icons-material/Language';
 
 const languageOptions = [
-  'unknown',
-  'hi-IN',
-  'bn-IN',
-  'kn-IN',
-  'ml-IN',
-  'mr-IN',
-  'od-IN',
-  'pa-IN',
-  'ta-IN',
-  'te-IN',
-  'en-IN',
-  'gu-IN'
+  { code: 'hi-IN', label: 'Hindi' },
+  { code: 'bn-IN', label: 'Bengali' },
+  { code: 'kn-IN', label: 'Kannada' },
+  { code: 'ml-IN', label: 'Malayalam' },
+  { code: 'mr-IN', label: 'Marathi' },
+  { code: 'od-IN', label: 'Odia' },
+  { code: 'pa-IN', label: 'Punjabi' },
+  { code: 'ta-IN', label: 'Tamil' },
+  { code: 'te-IN', label: 'Telugu' },
+  { code: 'en-IN', label: 'English' },
+  { code: 'gu-IN', label: 'Gujarati' },
 ];
 
+const LoadingSpinner = () => (
+  <Modal
+    open={true}
+    aria-labelledby="loading-modal"
+    aria-describedby="loading-modal-description"
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <Box
+      sx={{
+        position: 'relative',
+        width: '100vw',
+        height: '100vh',
+        bgcolor: 'rgba(0, 0, 0, 0.85)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      
+      <Box
+        sx={{
+          position: 'relative',
+          width: '200px',
+          height: '200px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+       
+        {[...Array(3)].map((_, index) => (
+          <Box
+            key={index}
+            sx={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              border: '4px solid transparent',
+              borderRadius: '50%',
+              animation: `spin${index + 1} 2s linear infinite`,
+              borderTopColor: index === 0 ? '#2196F3' : 
+                             index === 1 ? '#00BCD4' : '#4CAF50',
+              '@keyframes spin1': {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg)' },
+              },
+              '@keyframes spin2': {
+                '0%': { transform: 'rotate(120deg)' },
+                '100%': { transform: 'rotate(480deg)' },
+              },
+              '@keyframes spin3': {
+                '0%': { transform: 'rotate(240deg)' },
+                '100%': { transform: 'rotate(600deg)' },
+              },
+            }}
+          />
+        ))}
+
+       
+        <Box
+          sx={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            backgroundColor: '#2196F3',
+            animation: 'pulse 1.5s ease-in-out infinite',
+            '@keyframes pulse': {
+              '0%': { transform: 'scale(0.8)', opacity: 0.5 },
+              '50%': { transform: 'scale(1)', opacity: 1 },
+              '100%': { transform: 'scale(0.8)', opacity: 0.5 },
+            },
+          }}
+        />
+      </Box>
+
+      
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Typography
+          variant="h5"
+          sx={{
+            color: 'white',
+            fontWeight: 600,
+            mb: 2,
+            animation: 'fadeInOut 2s ease-in-out infinite',
+            '@keyframes fadeInOut': {
+              '0%, 100%': { opacity: 0.5 },
+              '50%': { opacity: 1 },
+            },
+          }}
+        >
+          Processing Your Audio
+        </Typography>
+
+      
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+          {['Converting', 'Translating', 'Generating'].map((step, index) => (
+            <Typography
+              key={step}
+              sx={{
+                color: '#2196F3',
+                fontSize: '0.9rem',
+                opacity: 0.8,
+                animation: `bounce 0.6s ease-in-out infinite ${index * 0.2}s`,
+                '@keyframes bounce': {
+                  '0%, 100%': { transform: 'translateY(0)' },
+                  '50%': { transform: 'translateY(-10px)' },
+                },
+              }}
+            >
+              {step}
+            </Typography>
+          ))}
+        </Box>
+      </Box>
+
+      
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 1,
+          mt: 4,
+          justifyContent: 'center',
+        }}
+      >
+        {[...Array(8)].map((_, index) => (
+          <Box
+            key={index}
+            sx={{
+              width: '4px',
+              height: '30px',
+              backgroundColor: '#2196F3',
+              animation: `audioWave 1s ease-in-out infinite ${index * 0.1}s`,
+              '@keyframes audioWave': {
+                '0%, 100%': { height: '30px' },
+                '50%': { height: '60px' },
+              },
+            }}
+          />
+        ))}
+      </Box>
+    </Box>
+  </Modal>
+);
 
 const AudioWaveform = ({ isRecording }) => {
   return (
@@ -142,7 +289,6 @@ const AudioRecorder = () => {
       formData.append('audio', audioBlob, 'recording.wav');
       formData.append('languageCode', selectedLanguage);
 
-      
       const response = await fetch('https://saravam.onrender.com/process-audio', {
         method: 'POST',
         body: formData,
@@ -171,6 +317,8 @@ const AudioRecorder = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f5f5f5' }}>
+      {isSubmitting && <LoadingSpinner />}
+      
       <AppBar position="static" sx={{
         background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
         boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
@@ -261,8 +409,8 @@ const AudioRecorder = () => {
                   Select a language
                 </MenuItem>
                 {languageOptions.map((lang) => (
-                  <MenuItem key={lang} value={lang}>
-                    {lang}
+                  <MenuItem key={lang.code} value={lang.code}>
+                    {lang.label}
                   </MenuItem>
                 ))}
               </Select>
@@ -354,10 +502,9 @@ const AudioRecorder = () => {
                     <Typography variant="subtitle2" color="primary">
                       Selected Language:
                     </Typography>
-                    <Typography>{selectedLanguage}</Typography>
+                    <Typography>{languageOptions.find(lang => lang.code === selectedLanguage)?.label}</Typography>
                   </Box>
 
-                  
                   <Box>
                     <Typography variant="subtitle2" color="primary">
                       Recorded Audio:
@@ -370,7 +517,7 @@ const AudioRecorder = () => {
                         height: 50
                       }}
                     />
-                     <Link
+                    <Link
                       href={audioURL}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -393,7 +540,7 @@ const AudioRecorder = () => {
                           height: 50
                         }}
                       />
-                       <Link
+                      <Link
                         href={outputAudioURL}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -410,8 +557,6 @@ const AudioRecorder = () => {
                     </Typography>
                     <Typography>{translation}</Typography>
                   </Box>
-
-
                 </Stack>
               </Paper>
             )}
